@@ -1,0 +1,277 @@
+#include <stdio.h>
+#include <stdlib.h> // Include stdlib.h for malloc function
+
+struct node {
+    int data;
+    struct node *llink; // Left link
+    struct node *rlink; // Right link
+};
+struct node *first = NULL;
+struct node *last = NULL;
+
+void create();
+void display();
+void insbeg();
+void insend();
+void insmid();
+void delbeg();
+void delend();
+void delmid();
+void display();
+int c=0;
+int main() {
+    int choice;
+    char option = 'y';
+
+    printf("Double-Ended Linked List Operations:\n");
+    printf("1. Create a new node\n");
+    printf("2. Insert at the beginning\n");
+    printf("3. Insert at the end\n");
+    printf("4. Insert in the middle\n");
+    printf("5. Delete at the beginning\n");
+    printf("6. Delete at the end\n");
+    printf("7. Delete in the middle\n");
+    printf("8. Display the linked list\n");
+    printf("9. Exit\n");
+
+    while (option == 'y' || option == 'Y') {
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                create();
+                break;
+            case 2:
+                insbeg();
+                break;
+            case 3:
+                insend();
+                break;
+            case 4:
+                insmid();
+                break;
+            case 5:
+                delbeg();
+                break;
+            case 6:
+                delend();
+                break;
+            case 7:
+                delmid();
+                break;
+            case 8:
+                display();
+                break;
+            case 9:
+                printf("Exiting the program.\n");
+                exit(0);
+            default:
+                printf("Invalid choice. Please enter a valid option.\n");
+        }
+
+        printf("Do you want to perform another operation? (y/n): ");
+        scanf(" %c", &option);
+    }
+
+    return 0;
+}
+
+// Rest of your code (create, display, insbeg functions) here...
+// Function to create a double-ended linked list
+void create() {
+    struct node *newnode, *current;
+    char option = 'y';
+
+    while (option == 'y' || option == 'Y') {
+        newnode = (struct node *)malloc(sizeof(struct node));
+        printf("Enter data: ");
+        scanf("%d", &newnode->data);
+        newnode->llink = NULL;
+        newnode->rlink = NULL;
+
+        if (first == NULL) {
+            first = last = newnode;
+        } else {
+            last->rlink = newnode;
+            newnode->llink = last;
+            last = newnode;
+        }
+
+        printf("Do you want to continue? (y/n): ");
+        scanf(" %c", &option);
+    }
+}
+
+void insend() {
+    struct node *newnode;
+    newnode = (struct node *)malloc(sizeof(struct node));
+    printf("Enter data: ");
+    scanf("%d", &newnode->data);
+    newnode->llink = NULL;
+    newnode->rlink = NULL;
+
+    if (first == NULL) {
+        first = last = newnode;
+    } else {
+        last->rlink = newnode;
+        newnode->llink = last;
+        last = newnode;
+    }
+}
+
+void insmid() {
+    int pos;
+    printf("Enter the position to insert (1 to %d): ", c + 1);
+    scanf("%d", &pos);
+
+    if (pos < 1 || pos > c + 1) {
+        printf("Invalid position. Insertion failed.\n");
+        return;
+    }
+
+    struct node *newnode, *temp, *prev;
+    newnode = (struct node *)malloc(sizeof(struct node));
+    printf("Enter data: ");
+    scanf("%d", &newnode->data);
+    newnode->llink = NULL;
+    newnode->rlink = NULL;
+
+    if (pos == 1) {
+        newnode->rlink = first;
+        first->llink = newnode;
+        first = newnode;
+    } else {
+        temp = first;
+        prev = NULL;
+        int i = 1;
+        while (i < pos) {
+            prev = temp;
+            temp = temp->rlink;
+            i++;
+        }
+        prev->rlink = newnode;
+        newnode->llink = prev;
+        newnode->rlink = temp;
+        temp->llink = newnode;
+    }
+
+    c++;
+}
+
+void delbeg() {
+    if (first == NULL) {
+        printf("The list is empty. Deletion failed.\n");
+        return;
+    }
+
+    struct node *temp;
+    temp = first;
+    first = first->rlink;
+    
+    if (first != NULL) {
+        first->llink = NULL;
+    }
+
+    free(temp);
+    c--;
+}
+
+void delend() {
+    if (first == NULL) {
+        printf("The list is empty. Deletion failed.\n");
+        return;
+    }
+
+    struct node *temp;
+    temp = last;
+    last = last->llink;
+
+    if (last != NULL) {
+        last->rlink = NULL;
+    }
+
+    free(temp);
+    c--;
+}
+
+void delmid() {
+    if (first == NULL) {
+        printf("The list is empty. Deletion failed.\n");
+        return;
+    }
+
+    int pos;
+    printf("Enter the position to delete (1 to %d): ", c);
+    scanf("%d", &pos);
+
+    if (pos < 1 || pos > c) {
+        printf("Invalid position. Deletion failed.\n");
+        return;
+    }
+
+    struct node *temp, *prev, *next;
+    temp = first;
+    int i = 1;
+
+    while (i < pos) {
+        temp = temp->rlink;
+        i++;
+    }
+
+    prev = temp->llink;
+    next = temp->rlink;
+
+    if (prev != NULL) {
+        prev->rlink = next;
+    }
+
+    if (next != NULL) {
+        next->llink = prev;
+    }
+
+    free(temp);
+    c--;
+}
+
+// Function to insert a node at the beginning of the double-ended linked list
+void insbeg() {
+    struct node *newnode;
+    newnode = (struct node *)malloc(sizeof(struct node));
+    printf("Enter data: ");
+    scanf("%d", &newnode->data);
+    newnode->llink = NULL;
+    newnode->rlink = NULL;
+
+    if (first == NULL) {
+        // If the list is empty, set both first and last pointers to the new node
+        first = last = newnode;
+    } else {
+        newnode->rlink = first;
+        first->llink = newnode;
+        first = newnode;
+    }
+
+    c++;
+}
+
+
+void display() {
+    if (first == NULL) {
+        printf("The list is empty.\n");
+        return;
+    }
+
+    struct node *temp;
+    temp = first;
+    printf("Double-Ended Linked List (Left to Right): ");
+    
+    while (temp != NULL) {
+        printf("%d ", temp->data);
+        temp = temp->rlink;
+    }
+    
+    printf("\n");
+}
+
+
